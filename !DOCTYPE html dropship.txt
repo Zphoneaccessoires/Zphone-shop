@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zphoneaccessoires - Bestellen</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f7f6; }
+        header { background: #fff; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #0056b3; position: sticky; top: 0; z-index: 1000; }
+        .logo { max-height: 65px; }
+        .cart-icon { cursor: pointer; font-size: 28px; position: relative; }
+        .cart-count { position: absolute; top: -5px; right: -10px; background: #d9534f; color: white; border-radius: 50%; padding: 2px 8px; font-size: 12px; }
+        
+        /* Winkelwagen zijmenu (breder gemaakt voor formulier) */
+        #cart-sidebar { position: fixed; top: 0; right: -450px; width: 350px; height: 100%; background: white; box-shadow: -2px 0 10px rgba(0,0,0,0.2); transition: 0.3s; z-index: 2000; padding: 20px; display: flex; flex-direction: column; overflow-y: auto; }
+        #cart-sidebar.open { right: 0; }
+        .cart-item { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 5px; font-size: 14px; }
+        
+        /* Adres Formulier Styling */
+        .address-form { margin-top: 20px; background: #f9f9f9; padding: 15px; border-radius: 8px; }
+        .address-form h3 { margin-top: 0; font-size: 16px; color: #0056b3; }
+        .address-form input { width: 90%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; display: block; }
+
+        .total-box { margin-top: 20px; font-size: 20px; font-weight: bold; border-top: 2px solid #0056b3; padding-top: 15px; }
+        .checkout-btn { background: #28a745; color: white; border: none; padding: 15px; width: 100%; border-radius: 5px; cursor: pointer; font-size: 18px; font-weight: bold; margin-top: 10px; }
+        
+        .container { max-width: 900px; margin: 40px auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
+        .product { background: white; border-radius: 12px; padding: 20px; width: 230px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .prijs { font-size: 22px; color: #d9534f; font-weight: bold; margin: 10px 0; }
+        .order-btn { background: #0056b3; color: white; border: none; padding: 10px; width: 100%; border-radius: 20px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="https://i.ibb.co" alt="Zphoneaccessoires Logo" class="logo">
+    <div class="cart-icon" onclick="toggleCart()">
+        🛒 <span id="cart-count" class="cart-count">0</span>
+    </div>
+</header>
+
+<div id="cart-sidebar">
+    <h2>Jouw Bestelling</h2>
+    <div id="cart-items-list"><p>Winkelwagen is leeg.</p></div>
+    
+    <!-- Adresgegevens velden -->
+    <div class="address-form" id="form-container">
+        <h3>Verzendgegevens</h3>
+        <input type="text" id="naam" placeholder="Volledige naam" required>
+        <input type="text" id="straat" placeholder="Straat + Huisnummer" required>
+        <input type="text" id="postcode" placeholder="Postcode" required>
+        <input type="text" id="stad" placeholder="Woonplaats" required>
+        <input type="email" id="email" placeholder="E-mailadres" required>
+    </div>
+
+    <div class="total-box">Totaal: €<span id="total-price">0.00</span></div>
+    
+    <button class="checkout-btn" onclick="startCheckout()">NU AFREKENEN</button>
+    <button style="margin-top:10px; background:none; border:none; cursor:pointer; color:blue;" onclick="toggleCart()">Verder winkelen</button>
+</div>
+
+<div class="container">
+    <div class="product">
+        <div style="background:#eee; height:80px; margin-bottom:10px; border-radius:5px; display:flex; align-items:center; justify-content:center; color:#999;">Foto Lader</div>
+        <h3>25W Snellader Samsung</h3>
+        <div class="prijs">€9,95</div>
+        <button class="order-btn" onclick="addToCart('25W Snellader', 9.95)">Bestellen</button>
+    </div>
+
+    <div class="product">
+        <div style="background:#eee; height:80px; margin-bottom:10px; border-radius:5px; display:flex; align-items:center; justify-content:center; color:#999;">Foto Hoesje</div>
+        <h3>Samsung/Apple Hoesje</h3>
+        <div class="prijs">€4,29</div>
+        <button class="order-btn" onclick="addToCart('Hoesje', 4.29)">Bestellen</button>
+    </div>
+</div>
+
+<script>
+    let cart = [];
+    let total = 0;
+
+    function toggleCart() { document.getElementById('cart-sidebar').classList.toggle('open'); }
+
+    function addToCart(name, price) {
+        cart.push({name, price});
+        total += price;
+        updateUI();
+        if(!document.getElementById('cart-sidebar').classList.contains('open')) toggleCart();
+    }
+
+    function updateUI() {
+        document.getElementById('cart-count').innerText = cart.length;
+        document.getElementById('total-price').innerText = total.toFixed(2);
+        const list = document.getElementById('cart-items-list');
+        list.innerHTML = cart.length === 0 ? "<p>Leeg</p>" : "";
+        cart.forEach(item => {
+            list.innerHTML += `<div class="cart-item"><span>${item.name}</span> <span>€${item.price.toFixed(2)}</span></div>`;
+        });
+    }
+
+    function startCheckout() {
+        const naam = document.getElementById('naam').value;
+        const straat = document.getElementById('straat').value;
+        
+        if(total === 0) {
+            alert("Voeg eerst producten toe!");
+            return;
+        }
+        
+        if(naam === "" || straat === "") {
+            alert("Vul a.u.b. je adresgegevens in voor de verzending.");
+            return;
+        }
+
+        // Als alles is ingevuld, sturen we ze naar de bank
+        alert("Bedankt " + naam + "! Je adres is opgeslagen. Je wordt nu doorgeleid naar de bank om te betalen.");
+        window.location.href = "https://www.abnamro.nl";
+    }
+</script>
+
+</body>
+</html>
+
+
